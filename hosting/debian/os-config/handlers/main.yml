@@ -1,0 +1,11 @@
+---
+# handlers file for os-config
+
+- name: restart chrony
+  service:
+    name: chrony
+    state: restarted
+    enabled: yes
+  when: ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu'
+  tags: chrony
+

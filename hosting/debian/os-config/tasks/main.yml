@@ -1,0 +1,51 @@
+---
+# tasks file for os-config
+
+- name: Determina l'architettura del sistema operativo
+  set_fact:
+    arch: "{{ ansible_architecture }}"
+
+- name: Mostra l'architettura del sistema
+  debug:
+    msg: "L'architettura del sistema è: {{ arch }}"
+
+- name: Imposta variabili basate sull'architettura
+  set_fact:
+    is_x86_64: "{{ arch == 'x86_64' }}"
+    is_aarch64: "{{ arch == 'aarch64' }}"
+
+- name: Installa pacchetti di base
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ BASE_PACKAGE_LIST }}"
+  when: ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu'
+  tags: base
+
+- name: Copio il file di configurazione di "chrony"
+  copy:
+    src: files/chrony.conf
+    dest: /etc/chrony/chrony.conf
+    owner: root
+    group: root
+    mode: '0644'
+    backup: true
+  notify: restart chrony
+
+- name: Creo il gruppo {{ HOSTING.GROUP_NAME }}
+  group:
+    name: "{{ HOSTING.GROUP_NAME }}"
+    gid: "{{ HOSTING.GROUP_ID }}"
+    state: present
+  tags: group
+
+- name: Creo l'utente {{ HOSTING.USER_NAME }}
+  user:
+    name: "{{ HOSTING.USER_NAME }}"
+    uid: "{{ HOSTING.USER_ID }}"
+    group: "{{ HOSTING.GROUP_NAME }}"
+    home: "{{ HOSTING.HOME_DIR }}"
+    shell: /bin/bash
+    create_home: yes
+    state: present
+

@@ -1,0 +1,27 @@
+---
+# defaults file for os-config
+
+BASE_PACKAGE_LIST: [
+  "apt-transport-https",
+  "ca-certificates",
+  "curl",
+  "gnupg",
+  "lsb-release",
+  "net-tools",
+  "sudo",
+  "wget",
+  "vim",
+  "git",
+  "unzip",
+  "htop",
+  "acl",
+  "chrony",
+  "rsyslog"
+]
+
+HOSTING:
+  USER_ID: 5000
+  GROUP_ID: 5000
+  USER_NAME: "hosting"
+  GROUP_NAME: "hosting"
+  HOME_DIR: "/srv/hosting"

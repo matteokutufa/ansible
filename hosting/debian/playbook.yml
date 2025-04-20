@@ -1,0 +1,8 @@
+---
+
+- name: Setup hosting server Debian/Ubuntu
+  hosts: all
+  gather_facts: yes
+  become: true
+  roles:
+    - os-config
