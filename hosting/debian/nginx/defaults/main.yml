@@ -1,0 +1,10 @@
+---
+# defaults file for nginx
+
+NGINX_REQUIRED_PACKAGES:
+  - curl 
+  - gnupg2 
+  - ca-certificates 
+  - lsb-release 
+  - debian-archive-keyring
+

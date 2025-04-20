@@ -1,0 +1,72 @@
+---
+# tasks file for nginx
+
+- name: Install Nginx required packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ NGINX_REQUIRED_PACKAGES }}"
+  when: ansible_distribution == "Debian"
+  tags:
+    - nginx
+    - nginx_install
+    - nginx_required_packages
+
+- name: Add Nginx signing key
+  apt_key:
+    url: "https://nginx.org/keys/nginx_signing.key"
+    state: present
+  when: ansible_distribution == "Debian"
+  tags:
+    - nginx
+    - nginx_install
+    - nginx_signing_key
+
+- name: Add Nginx repository
+  apt_repository:
+    repo: "deb http://nginx.org/packages/{{ ansible_distribution | lower }}/ {{ ansible_distribution_release }} nginx"
+    state: present
+    update_cache: yes
+  when: ansible_distribution == "Debian"
+  tags:
+    - nginx
+    - nginx_install
+    - nginx_repo
+
+- name: Set Nginx repository preferred instead of default
+  copy:
+    content: |
+      Package: *
+      Pin: origin nginx.org
+      Pin: release o=nginx
+      Pin-Priority: 900
+    dest: /etc/apt/preferences.d/99nginx
+    owner: root
+    group: root
+    mode: '0644'
+  when: ansible_distribution == "Debian"
+  tags:
+    - nginx
+    - nginx_install
+    - nginx_repo
+
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+  when: ansible_distribution == "Debian"
+  tags:
+    - nginx
+    - nginx_install
+    - nginx_package
+
+- name: Ensure Nginx is running and enabled
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+  when: ansible_distribution == "Debian"
+  tags:
+    - nginx
+    - nginx_install
+    - nginx_service
